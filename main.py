@@ -1,7 +1,10 @@
 import os.path
+import sys
 
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QFileDialog, QMessageBox
-from moviepy.editor import VideoFileClip
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QFileDialog, QMessageBox, QApplication
+import moviepy
+from moviepy.video.io.VideoFileClip import VideoFileClip
+
 
 class MP4toGifConverter(QWidget):
     def __init__(self):
@@ -43,4 +46,20 @@ class MP4toGifConverter(QWidget):
             self.repaint()
 
             clip = VideoFileClip(self.video_path)
+            # clip = clip.subclip(0, 5) # Convert only the first 5 seconds
+            clip.write_gif(gif_path)
 
+            self.label.setText(f"Converted to GIF: {os.path.basename(gif_path)}")
+            self.convert_btn.setDisabled(True)
+
+            QMessageBox.information(self, "Success", "Conversion successful!")
+        else:
+            QMessageBox.warning(self, "Error", "No file selected!")
+
+
+# Run the application
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    win = MP4toGifConverter()
+    win.show()
+    sys.exit(app.exec())
